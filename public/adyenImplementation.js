@@ -4,18 +4,20 @@ const type = document.getElementById("type").innerHTML;
 // Used to finalize a checkout call in case of redirect
 const urlParams = new URLSearchParams(window.location.search);
 const sessionId = urlParams.get('sessionId'); // Unique identifier for the payment session
+
 const redirectResult = urlParams.get('redirectResult');
 
 
 async function startCheckout() {
   try {
-    // Init Sessions
+    // Start by getting Sessions data
     const checkoutSessionResponse = await callServer("/api/sessions?type=" + type);
+    console.log(checkoutSessionResponse);
 
     // Create AdyenCheckout using Sessions response
     const checkout = await createAdyenCheckout(checkoutSessionResponse)
 
-  // Create an instance of Drop-in and mount it
+    // Create an instance of Drop-in and mount it
     checkout.create(type).mount(document.getElementById(type));
 
   } catch (error) {
