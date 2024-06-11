@@ -37,6 +37,8 @@ app.engine(
 
 app.set("view engine", "handlebars");
 
+
+
 /* ################# API ENDPOINTS ###################### */
 
 // creates drop-in session 
@@ -52,12 +54,14 @@ app.post("/api/sessions", async (req, res) => {
       merchantAccount: process.env.ADYEN_MERCHANT_ACCOUNT, 
       reference: orderRef, 
       returnUrl: `${protocol}://${req.get('host')}/checkout?orderRef=${orderRef}`, // set redirect URL required for some payment methods (ie iDEAL)
+      shopperEmail: "chrisrolling27@gmail.com",
       lineItems: [
         {quantity: 1, amountIncludingTax: 5000 , description: "Sunglasses"},
         {quantity: 1, amountIncludingTax: 5000 , description: "Headphones"}
       ] 
     });
 
+    console.log(response);
     res.json(response);
   } catch (err) {
     console.error(`Error: ${err.message}, error code: ${err.errorCode}`);
@@ -66,11 +70,9 @@ app.post("/api/sessions", async (req, res) => {
 });
 
 
-/* ################# end API ENDPOINTS ###################### */
-
 /* ################# CLIENT SIDE ENDPOINTS ###################### */
 
-// Index (select a demo)
+// Index
 app.get("/", (req, res) => res.render("index"));
 
 // Cart (continue to checkout)
@@ -95,7 +97,6 @@ app.get("/result/:type", (req, res) =>
   })
 );
 
-/* ################# end CLIENT SIDE ENDPOINTS ###################### */
 
 /* ################# WEBHOOK ###################### */
 
