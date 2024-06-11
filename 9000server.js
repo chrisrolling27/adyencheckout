@@ -31,7 +31,7 @@ app.all('/*', function (req, res) {
     console.log("-------------- New Request --------------");
     console.log("Headers:"+ JSON.stringify(req.headers, null, 3));
     console.log("Body:"+ JSON.stringify(req.body, null, 3));
-    res.status(200).json({ message: "Thank you for the message, friend." });
+    res.status(200).json({ message: "Thank you for the message!" });
  })
 
 app.listen(port, () => {
