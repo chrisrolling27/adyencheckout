@@ -3,23 +3,22 @@ const type = document.getElementById("type").innerHTML;
 
 // Used to finalize a checkout call in case of redirect
 const urlParams = new URLSearchParams(window.location.search);
-const sessionId = urlParams.get('sessionId'); // Unique identifier for the payment session
-
-const redirectResult = urlParams.get('redirectResult');
-
+const sessionId = urlParams.get("sessionId"); // Unique identifier for the payment session
+const redirectResult = urlParams.get("redirectResult");
 
 async function startCheckout() {
   try {
     // Start by getting Sessions data
-    const checkoutSessionResponse = await callServer("/api/sessions?type=" + type);
+    const checkoutSessionResponse = await callServer(
+      "/api/sessions?type=" + type
+    );
     console.log(checkoutSessionResponse);
 
     // Create AdyenCheckout using Sessions response
-    const checkout = await createAdyenCheckout(checkoutSessionResponse)
+    const checkout = await createAdyenCheckout(checkoutSessionResponse);
 
     // Create an instance of Drop-in and mount it
     checkout.create(type).mount(document.getElementById(type));
-
   } catch (error) {
     console.error(error);
     alert("Error occurred. Look at console for details");
@@ -28,57 +27,56 @@ async function startCheckout() {
 
 // Some payment methods use redirects. This is where we finalize the operation
 async function finalizeCheckout() {
-    try {
-        // Create AdyenCheckout re-using existing Session
-        const checkout = await createAdyenCheckout({id: sessionId});
+  try {
+    // Create AdyenCheckout re-using existing Session
+    const checkout = await createAdyenCheckout({ id: sessionId });
 
-        // Submit the extracted redirectResult (to trigger onPaymentCompleted() handler)
-        checkout.submitDetails({details: {redirectResult}});
-    } catch (error) {
-        console.error(error);
-        alert("Error occurred. Look at console for details");
-    }
+    // Submit the extracted redirectResult (to trigger onPaymentCompleted() handler)
+    checkout.submitDetails({ details: { redirectResult } });
+  } catch (error) {
+    console.error(error);
+    alert("Error occurred. Look at console for details");
+  }
 }
 
 async function createAdyenCheckout(session) {
-  
-    const configuration = {
-        clientKey,
-        locale: "en_US",
-        environment: "test",  // change to live for production
-        showPayButton: true,
-        session: session,
-        paymentMethodsConfiguration: {
-            ideal: {
-                showImage: true
-            },
-            card: {
-                hasHolderName: true,
-                holderNameRequired: true,
-                name: "Credit or debit card",
-                amount: {
-                    value: 10000,
-                    currency: "EUR"
-                }
-            },
-            paypal: {
-                amount: {
-                    currency: "USD",
-                    value: 10000
-                },
-                environment: "test",
-                countryCode: "US"   // Only needed for test. This will be automatically retrieved when you are in production.
-            }
+  const configuration = {
+    clientKey,
+    locale: "en_US",
+    environment: "test", // change to live for production
+    showPayButton: true,
+    session: session,
+    paymentMethodsConfiguration: {
+      ideal: {
+        showImage: true,
+      },
+      card: {
+        hasHolderName: true,
+        holderNameRequired: true,
+        name: "Credit or debit card",
+        amount: {
+          value: 10000,
+          currency: "EUR",
         },
-        onPaymentCompleted: (result, component) => {
-            handleServerResponse(result, component);
+      },
+      paypal: {
+        amount: {
+          currency: "USD",
+          value: 10000,
         },
-        onError: (error, component) => {
-            console.error(error.name, error.message, error.stack, component);
-        }
-    };
+        environment: "test",
+        countryCode: "US", // Only needed for test. This will be automatically retrieved when you are in production.
+      },
+    },
+    onPaymentCompleted: (result, component) => {
+      handleServerResponse(result, component);
+    },
+    onError: (error, component) => {
+      console.error(error.name, error.message, error.stack, component);
+    },
+  };
 
-    return new AdyenCheckout(configuration);
+  return new AdyenCheckout(configuration);
 }
 
 // Calls your server endpoints
@@ -118,9 +116,8 @@ function handleServerResponse(res, component) {
 }
 
 if (!sessionId) {
-    startCheckout();
-}
-else {
-    // existing session: complete Checkout
-    finalizeCheckout();
+  startCheckout();
+} else {
+  // existing session: complete Checkout
+  finalizeCheckout();
 }

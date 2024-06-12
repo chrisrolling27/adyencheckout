@@ -1,10 +1,9 @@
-const express = require('express');
-const bodyParser = require('body-parser');
+const express = require("express");
+const bodyParser = require("body-parser");
 const app = express();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
 
 const port = 9000;
 
@@ -12,13 +11,10 @@ const port = 9000;
 app.use(bodyParser.json());
 
 // Endpoint to serve a simple HTML page
-app.get('/hello', (req, res) => {
-    res.send(`
+app.get("/hello", (req, res) => {
+  res.send(`
         <!DOCTYPE html>
         <html>
-        <head>
-            <title>Hello, World!</title>
-        </head>
         <body>
             <h1>Hello, World!</h1>
         </body>
@@ -27,16 +23,13 @@ app.get('/hello', (req, res) => {
 });
 
 // Endpoint to receive webhooks
-app.all('/*', function (req, res) {
-    console.log("-------------- New Request --------------");
-    console.log("Headers:"+ JSON.stringify(req.headers, null, 3));
-    console.log("Body:"+ JSON.stringify(req.body, null, 3));
-    res.status(200).json({ message: "Thank you for the message!" });
- })
-
-app.listen(port, () => {
-    console.log(`Server is running on http://localhost:${port}`);
+app.all("/*", function (req, res) {
+  console.log("-------------- New Request --------------");
+  console.log("Headers:" + JSON.stringify(req.headers, null, 3));
+  console.log("Body:" + JSON.stringify(req.body, null, 3));
+  res.status(200).json({ message: "Thank you for the message!" });
 });
 
-
-
+app.listen(port, () => {
+  console.log(`Server is running on http://localhost:${port}`);
+});
