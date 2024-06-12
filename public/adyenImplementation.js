@@ -1,6 +1,11 @@
 const clientKey = document.getElementById("clientKey").innerHTML;
 const type = document.getElementById("type").innerHTML;
 
+// Used to finalize a checkout call in case of redirect
+const urlParams = new URLSearchParams(window.location.search);
+const sessionId = urlParams.get("sessionId"); // Unique identifier for the payment session
+const redirectResult = urlParams.get("redirectResult");
+
 async function startCheckout() {
   try {
     // Start by getting Sessions data
@@ -117,7 +122,4 @@ if (!sessionId) {
   finalizeCheckout();
 }
 
-// Used to finalize a checkout call in case of redirect
-const urlParams = new URLSearchParams(window.location.search);
-const sessionId = urlParams.get("sessionId"); // Unique identifier for the payment session
-const redirectResult = urlParams.get("redirectResult");
+
